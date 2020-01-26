@@ -1,7 +1,7 @@
 import React from 'react';
 const BASE_URL        = 'https://localhost:44374/api/';
 
-const AUTH_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ3b29kc21hbi5sdWNhc0BnbWFpbC5jb20iLCJqdGkiOiJjYTQ3NmIyMy0zYWU0LTRlMjMtYjQ5Zi00YjNkOTVkNGM5MjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImQyN2E5ZmI0LWFkZTQtNGYxZC1iMjFlLTE1YmRlNGQxYTViZSIsImV4cCI6MTU3OTk0MzE1MywiaXNzIjoiVGVzdC5jb20iLCJhdWQiOiJUZXN0LmNvbSJ9.udKesYy_tIP2mccIFxGKSnICSAp6sHWNUDJuvMdXy3o";
+const AUTH_TOKEN = "auth_token"
 
 class Login extends React.Component {
 
@@ -81,8 +81,7 @@ class Login extends React.Component {
     }
 
     getSecureData(e) {
-      let token   = sessionStorage.getItem('auth_token');
-
+      let token   = sessionStorage.getItem(AUTH_TOKEN);
 
       const URL        = BASE_URL + 'Login/List';
 
@@ -99,13 +98,13 @@ class Login extends React.Component {
       .then(res => res.json())
       // Data Retrieved.
       .then((data) => {
-          alert(JSON.stringify(data))
-          this.setState({todos:data });
+        console.log(data)
+        this.setState({todos:data });
       })
 
         // Data Not Retrieved.
         .catch((error) => {
-            alert(error);
+          console.error(error)
         });
 
     }
@@ -139,10 +138,7 @@ class Login extends React.Component {
               ))}
             </ul>
             <br/>
-            {
-              this.state.loggedIn &&
-            <button onClick={this.logout}>Logout</button>
-            }
+
             </div>
         )
     }

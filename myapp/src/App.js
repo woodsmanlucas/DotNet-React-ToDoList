@@ -12,7 +12,6 @@ class App extends Component {
           <li><Link to="/login">Login</Link></li>
           <li><Link to="/">Home</Link></li>
         </ul>
-        <b>Header</b>
 
         {/* Our router goes here */}
         <Switch>
@@ -20,7 +19,6 @@ class App extends Component {
         <Route exact path="/" component={Home} />
 
         </Switch>
-        <h3>Footer</h3>
       </div>
     </Router>);
   }
