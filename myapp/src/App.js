@@ -4,6 +4,12 @@ import Login         from "./components/Login";
 import {Home}         from './components/Home'
 
 class App extends Component {
+
+  getLogin(LoggedIn){
+    this.setState({LoggedIn: LoggedIn})
+    console.log(LoggedIn)
+  }
+
   render() {
     return  (
     <Router>
@@ -16,7 +22,9 @@ class App extends Component {
 
         {/* Our router goes here */}
         <Switch>
-        <Route exact path="/login" component={Login} />
+        <Route exact path="/login" >
+          <Login getLogin={this.getLogin.bind(this)} />
+        </Route>
         <Route exact path="/" component={Home} />
 
         </Switch>

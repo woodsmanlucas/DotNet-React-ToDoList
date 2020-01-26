@@ -60,6 +60,7 @@ class Login extends React.Component {
                 this.setState({loginMessage:"The user has been logged in.",
                 token: json["token"] });
                 this.setState({loggedIn: true})
+                this.props.getLogin(true)
               }
               else {
                 this.setState({loginMessage:
@@ -78,6 +79,7 @@ class Login extends React.Component {
           sessionStorage.clear();
       }
       this.setState({todos:[], loginMessage : "", token:"", loggedIn: false});
+      this.props.getLogin(false)
     }
 
     getSecureData(e) {
