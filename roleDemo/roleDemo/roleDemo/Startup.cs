@@ -13,7 +13,11 @@ using Microsoft.EntityFrameworkCore;
 using roleDemo.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using roleDemo.Models;
 
 namespace roleDemo {
     public class Startup {
@@ -33,6 +37,27 @@ namespace roleDemo {
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite("Data Source=.\\wwwroot\\sql.db"));
+            services.AddDbContext<TodoContext>(options =>
+                options.UseSqlite("Data Source=.\\wwwroot\\todo.db"));
+
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+           .AddJwtBearer(options =>
+           {
+               options.TokenValidationParameters = new TokenValidationParameters
+               {
+                   ValidateIssuer = true,
+                   ValidateAudience = true,
+                   ValidateLifetime = true,
+                   ValidateIssuerSigningKey = true,
+                   ValidIssuer = Configuration["Jwt:Issuer"],
+                   ValidAudience = Configuration["Jwt:Issuer"],
+                   IssuerSigningKey
+               = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+               };
+           });
+
 
             services.AddDefaultIdentity<IdentityUser>()
                     .AddDefaultUI(UIFramework.Bootstrap4)

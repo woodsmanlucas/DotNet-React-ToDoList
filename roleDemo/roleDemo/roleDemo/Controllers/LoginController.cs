@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -43,8 +44,7 @@ namespace roleDemo.Controllers
         [Route("List")]
         // Since we have cookie authentication and Jwt authentication we must
         // specify that we want Jwt authentication here.
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-         Roles = "Admin,Manager")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public JsonResult List()
         {
             var claim = HttpContext.User.Claims.ElementAt(0);
@@ -132,4 +132,5 @@ namespace roleDemo.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
+
 }

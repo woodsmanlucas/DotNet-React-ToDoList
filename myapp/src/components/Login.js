@@ -14,7 +14,6 @@ class Login extends React.Component {
           todos:[]
         };
         this.login         = this.login.bind(this);
-        this.logout        = this.logout.bind(this);
         this.getSecureData = this.getSecureData.bind(this);
     }
 
@@ -74,13 +73,7 @@ class Login extends React.Component {
           })
     }
 
-    logout(e) {
-      if(sessionStorage.getItem([AUTH_TOKEN])!=null) {
-          sessionStorage.clear();
-      }
-      this.setState({todos:[], loginMessage : "", token:"", loggedIn: false});
-      this.props.getLogin(false)
-    }
+
 
     getSecureData(e) {
       let token   = sessionStorage.getItem(AUTH_TOKEN);
@@ -131,6 +124,7 @@ class Login extends React.Component {
               <tr><td><button onClick={this.login}>Login</button></td><td></td></tr>
               </tbody>
             </table>
+
             {this.state.loginMessage}<br/>{this.state.token}<br/><br/>
 
             <button onClick={this.getSecureData}>Get Secure Data</button>
