@@ -17,6 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
 using roleDemo.Data;
+using roleDemo.Repositories;
 
 namespace roleDemo.Controllers
 {
@@ -28,34 +29,50 @@ namespace roleDemo.Controllers
         private IConfiguration _config;
         private IServiceProvider _serviceProvider;
         private ApplicationDbContext _context;
+        private UserManager<IdentityUser> _userManager;
 
         public LoginController(SignInManager<IdentityUser> signInManager,
                                 IConfiguration config,
                                 IServiceProvider serviceProvider,
-                                ApplicationDbContext context)
+                                ApplicationDbContext context,
+                                UserManager<IdentityUser> userManager)
         {
             _signInManager = signInManager;
             _config = config;
             _serviceProvider = serviceProvider;
             _context = context;
+            _userManager = userManager;
         }
 
         [HttpGet]
-        [Route("List")]
+        [Route("Users")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,Manager")]
+        // Since we have cookie authentication and Jwt authentication we must
+        // specify that we want Jwt authentication here.
+        public IActionResult Users()
+        {
+            UserRepo userRepo = new UserRepo(_context);
+            var users = userRepo.All();
+            return Ok(users);
+        }
+
+
+
+        [HttpGet]
+        [Route("MyRole")]
         // Since we have cookie authentication and Jwt authentication we must
         // specify that we want Jwt authentication here.
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public JsonResult List()
+        public async Task<IActionResult> Role()
         {
-            var claim = HttpContext.User.Claims.ElementAt(0);
-            string userName = claim.Value;
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            JArray todoList = new JArray();
-            todoList.Add("Wash car");
-            todoList.Add("Do laundry");
-            return Json(todoList);
+            var user = await _userManager.GetUserAsync(User);
+            String userName = user.Email;
+            UserRoleRepo userRoleRepo = new UserRoleRepo(_serviceProvider);
+            var roles = await userRoleRepo.GetUserRoles(userName);
+            return Ok(roles);
         }
+
+
 
         [HttpPost]
         public async Task<JsonResult> OnPostAsync([FromBody]LoginVM loginVM)

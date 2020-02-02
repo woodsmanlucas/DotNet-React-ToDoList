@@ -14,7 +14,6 @@ class Login extends React.Component {
           todos:[]
         };
         this.login         = this.login.bind(this);
-        this.getSecureData = this.getSecureData.bind(this);
     }
 
     // Called when constructor is finished building component.
@@ -26,7 +25,7 @@ class Login extends React.Component {
     }
 
     // Executes when button pressed.
-    login(e) {
+    async login(e) {
       const email      = this.email.value;
       const password   = this.password.value;
       const rememberMe = false;
@@ -35,7 +34,7 @@ class Login extends React.Component {
       this.email.value    = ""; // Clear input.
       this.password.value = ""; // Clear input.
 
-      fetch(URL, {
+      await fetch(URL, {
           method: 'POST',
           headers: {
               'Accept': 'application/json',
@@ -71,37 +70,23 @@ class Login extends React.Component {
               if(sessionStorage[""])
               alert(error);
           })
-    }
-
-
-
-    getSecureData(e) {
-      let token   = sessionStorage.getItem(AUTH_TOKEN);
-
-      const URL        = BASE_URL + 'Login/List';
-
-        // This code gets data from the remote server.
-        // fetch(URL).then(response => response.json())
-        fetch(URL, {
-          method: 'GET',
-          headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
+          const token = sessionStorage.getItem("auth_token")
+          const response = await fetch('https://localhost:44374/api/login/MyRole', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        const data = await response.json()
+        let bool = false
+        data.forEach(element => {
+          if(element.roleName === 'Manager' || element.roleName === 'Admin'){
+            bool = true
           }
-      })
-      .then(res => res.json())
-      // Data Retrieved.
-      .then((data) => {
-        console.log(data)
-        this.setState({todos:data });
-      })
-
-        // Data Not Retrieved.
-        .catch((error) => {
-          console.error(error)
         });
-
+        this.props.getIsManager(bool)
     }
     render() {
         return (
@@ -119,23 +104,12 @@ class Login extends React.Component {
               </tr>
               <tr>
                 <td>Password: </td>
-                <td> <input type='text' ref={(passwordInput)=> this.password = passwordInput}/></td>
+                <td> <input type='password' ref={(passwordInput)=> this.password = passwordInput}/></td>
               </tr>
               <tr><td><button onClick={this.login}>Login</button></td><td></td></tr>
               </tbody>
             </table>
-
-            {this.state.loginMessage}<br/>{this.state.token}<br/><br/>
-
-            <button onClick={this.getSecureData}>Get Secure Data</button>
-            <ul>
-              {this.state.todos.map((item, index)=>(
-                <li key={item}>{index} {item} {item.description}</li>
-              ))}
-            </ul>
-            <br/>
-
-            </div>
+           </div>
         )
     }
 }
